@@ -180,6 +180,7 @@
       position: relative;
       width: 100%;
       height: 100%;
+      -webkit-transform-style: preserve-3d;
       transform-style: preserve-3d;
       transition: transform .55s cubic-bezier(.2, .7, .2, 1);
       cursor: pointer;
@@ -197,7 +198,14 @@
       flex-direction: column;
       padding: 1.1rem;
       overflow: hidden;
+      /* Safari иногда рисует вложенные слои сквозь backface-visibility.
+         Поэтому неактивная сторона прячется на середине поворота (≈ 80 мс). */
+      transition: visibility 0s linear .08s;
     }
+    .front { transform: rotateY(0deg); }
+    .flip.is-flipped .front,
+    .flip:not(.is-flipped) .back { visibility: hidden; }
+    .flip.no-anim .face { transition: none; }
     .front {
       background: rgb(var(--surface));
       border: 1.5px solid rgb(var(--edge));
@@ -210,7 +218,6 @@
 
     /* Клетка для прописей (как в японской тетради): рамка и пунктирный крест. */
     .genko {
-      position: relative;
       display: grid;
       place-items: center;
       width: 1.22em;
@@ -218,17 +225,17 @@
       font-size: clamp(7.5rem, min(52vw, 28vh), 14rem);
       border: 2px solid rgb(var(--primary) / .5);
       border-radius: .06em;
-      background: rgb(var(--primary) / .035);
+      /* Пунктирный крест рисуется фоном: без отдельных слоёв над знаком. */
+      --guide: rgb(var(--primary) / .42);
+      background-color: rgb(var(--primary) / .035);
+      background-image:
+        repeating-linear-gradient(to bottom, var(--guide) 0 6px, transparent 6px 12px),
+        repeating-linear-gradient(to right,  var(--guide) 0 6px, transparent 6px 12px);
+      background-size: 1.5px 100%, 100% 1.5px;
+      background-position: center, center;
+      background-repeat: no-repeat;
     }
-    .genko::before, .genko::after {
-      content: '';
-      position: absolute;
-      border-color: rgb(var(--primary) / .42);
-      border-style: dashed;
-    }
-    .genko::before { left: 50%; top: 0; bottom: 0; border-left-width: 1.5px; transform: translateX(-50%); }
-    .genko::after  { top: 50%; left: 0; right: 0; border-top-width: 1.5px; transform: translateY(-50%); }
-    .glyph { position: relative; z-index: 1; line-height: 1; color: rgb(var(--ink)); font-weight: 600; }
+    .glyph { line-height: 1; color: rgb(var(--ink)); font-weight: 600; }
 
     /* Оборот */
     .back {
@@ -260,11 +267,13 @@
     }
     .glass-label svg { width: 14px; height: 14px; }
     .back mark {
-      background: none;
       color: inherit;
-      box-shadow: inset 0 -.18em 0 rgb(var(--sakura) / .95);
-      border-radius: 0;
-      padding: 0 .02em;
+      background: rgb(var(--sakura) / .45);
+      border-radius: .22em;
+      padding: 0 .08em;
+      margin: 0 .02em;
+      -webkit-box-decoration-break: clone;
+      box-decoration-break: clone;
     }
     .sound-ring {
       display: grid;
@@ -382,8 +391,6 @@
     .type-card.is-ok  .glyph { color: rgb(var(--good-ink)); }
     .type-card.is-bad .glyph { color: rgb(var(--bad-ink)); }
     .type-card.is-ok .genko, .type-card.is-bad .genko { border-color: transparent; background: none; }
-    .type-card.is-ok .genko::before, .type-card.is-ok .genko::after,
-    .type-card.is-bad .genko::before, .type-card.is-bad .genko::after { opacity: 0; }
     .answer-input { transition: border-color .15s ease, box-shadow .15s ease, color .15s ease; border: 2px solid rgb(var(--edge)); }
     .answer-input:focus { outline: none; border-color: rgb(var(--primary)); box-shadow: 0 0 0 4px rgb(var(--primary) / .2); }
     .answer-input.is-ok  { border-color: rgb(var(--good)); box-shadow: 0 0 0 4px rgb(var(--good) / .2); color: rgb(var(--good-ink)); }
@@ -516,7 +523,7 @@
     .anim-bump  { animation: bump .3s ease-out; display: inline-block; }
 
     @media (prefers-reduced-motion: reduce) {
-      .flip { transition: none; }
+      .flip, .face { transition: none; }
       .anim-card-in, .anim-rise, .anim-pop, .anim-shake, .anim-bump, .sheet, .sheet-scrim,
       .exit-bad, .exit-hard, .exit-good, .exit-easy { animation: none; }
       .toast { animation: none; }
