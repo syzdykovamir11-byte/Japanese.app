@@ -1,26 +1,38 @@
-# Kana drill
+# Кана: карточки
 
-A single-page drill for memorizing the 46 basic hiragana and katakana.
+Сайт для запоминания 46 знаков хираганы и катаканы. Откройте `index.html` в браузере. Сборка и установка не нужны.
 
-Open `index.html` in a browser. No build step and no install.
+## Вкладки
 
-## How it works
+### Карточки
 
-- Pick Hiragana, Katakana, or Mixed (keys `1`, `2`, `3`).
-- A kana appears. Type its romaji and press `Enter`.
-- Correct: the card turns green and the next kana loads.
-- Wrong: the card turns red and the correct romaji appears below the input. Press `Enter` to continue.
-- Stuck: press `Space` (or tap "reveal") to see the answer. This counts as a miss.
-- `Esc` returns to the menu.
+- Большая карточка со знаком. Нажмите на неё (или `Пробел`), и она перевернётся.
+- На обороте: ромадзи, чтение по-русски, ассоциация для запоминания и пример слова с переводом и картинкой.
+- Снизу четыре кнопки: Плохо, Норм, Хорошо, Легко. Под каждой написано, когда карточка вернётся. С клавиатуры: `1`–`4`.
+- Новая карточка проходит шаги «1 мин → 10 мин», потом интервал растёт в днях. «Плохо» возвращает её в начало.
+- 15 новых знаков в день на азбуку. Когда всё пройдено, можно взять ещё 10 или повторить слабые.
 
-The header shows the current streak, the best streak for that mode, and accuracy. Best streaks are saved in the browser. Missed kana are listed at the bottom under "review" and come up more often for the rest of the session.
+### Ввод
 
-Accepted alternate spellings: `si` (shi), `ti` (chi), `tu` (tsu), `hu` (fu), `o` (wo), `nn` (n).
+Знак на экране, ученик вводит ромадзи и нажимает `Enter`. Зелёный — верно, красный — неверно, под полем появляется правильный ответ. `Пробел` показывает ответ и считается ошибкой. Слабые знаки выпадают чаще. Результаты идут в тот же прогресс, что и карточки.
 
-## Editing the character set
+Засчитываются и другие записи: `si`, `ti`, `tu`, `hu`, `o` (для を), `nn`.
 
-The kana data is the `KANA` array near the top of the `<script>` block in `index.html`. Each entry has `romaji`, `hiragana`, and `katakana`. Alternate spellings live in `ALTERNATES`.
+### Прогресс
 
-## Hosting
+- Сколько знаков ученик знает, сколько дней подряд занимается, сколько повторов сегодня.
+- Шкала по уровням: Выучено, Хорошо, Учу, Слабо, Новая.
+- «Труднее всего»: пять знаков с самыми низкими оценками. Кнопка «Учить слабые» запускает круг из 10 таких карточек. Карточка с оценкой «Плохо» возвращается, пока не запомнится.
+- Таблица годзюон: цвет клетки — уровень знака. Нажмите на клетку, чтобы увидеть оборот карточки и статистику.
 
-Any static host works. For GitHub Pages: Settings → Pages → deploy from the branch root.
+Прогресс хранится только в браузере ученика. На сервер ничего не отправляется.
+
+## Как поменять содержимое
+
+- Знаки, ассоциации и примеры: `data.js`, массив `KANA`.
+- Лимит новых карточек, размер круга слабых: константы в начале `app.js`.
+- Цвета и шрифты: `DESIGN.md` и токены в `index.html`.
+
+## Хостинг
+
+Подойдёт любой статический хостинг. Для GitHub Pages: Settings → Pages → публикация из корня ветки.
