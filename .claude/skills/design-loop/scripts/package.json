@@ -1,0 +1,9 @@
+{
+  "name": "design-loop-scripts",
+  "private": true,
+  "description": "Screenshot and audit tooling for the design-loop skill. Install once here, not in client projects.",
+  "dependencies": {
+    "@axe-core/playwright": "^4.10.0",
+    "playwright": "^1.48.0"
+  }
+}
